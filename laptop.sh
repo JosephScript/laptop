@@ -74,12 +74,29 @@ brew_install_or_upgrade() {
   fi
 }
 
+brew_cask_install_or_upgrade() {
+  if brew_cask_is_installed "$1"; then
+    brew cask upgrade "$@"
+  else
+    brew cask install "$@"
+  fi
+}
+
 brew_is_installed() {
   local name
   name="$(brew_expand_alias "$1")"
 
   brew list -1 | grep -Fqx "$name"
 }
+
+
+brew_cask_is_installed() {
+  local name
+  name="$(brew_expand_alias "$1")"
+
+  brew cask list -1 | grep -Fqx "$name"
+}
+
 
 brew_is_upgradable() {
   local name
@@ -168,3 +185,32 @@ brew_launchctl_restart 'neo4j'
 brew_launchctl_restart 'mongodb'
 
 fancy_echo "Updating development tools ..."
+
+# Visual Studio Code
+# Atom
+# Mozilla Firefox
+# Mozilla Firefox Developer Edition
+# Spotify
+# Slack
+# cocoarestclient
+
+fancy_echo "Configuring Ruby ..."
+find_latest_ruby() {
+  rbenv install -l | grep -v - | tail -1 | sed -e 's/^ *//'
+}
+
+ruby_version="$(find_latest_ruby)"
+# shellcheck disable=SC2016
+append_to_zshrc 'eval "$(rbenv init - --no-rehash)"' 1
+eval "$(rbenv init -)"
+
+if ! rbenv versions | grep -Fq "$ruby_version"; then
+  RUBY_CONFIGURE_OPTS=--with-openssl-dir=/usr/local/opt/openssl rbenv install -s "$ruby_version"
+fi
+
+rbenv global "$ruby_version"
+rbenv shell "$ruby_version"
+gem update --system
+gem_install_or_update 'bundler'
+number_of_cores=$(sysctl -n hw.ncpu)
+bundle config --global jobs $((number_of_cores - 1))
