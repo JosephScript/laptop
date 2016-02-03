@@ -76,7 +76,7 @@ brew_install_or_upgrade() {
 
 brew_cask_install_or_upgrade() {
   if brew_cask_is_installed "$1"; then
-    brew cask upgrade "$@"
+    brew cask update "$@"
   else
     brew cask install "$@"
   fi
@@ -165,12 +165,12 @@ fancy_echo "Updating Unix tools ..."
 brew_install_or_upgrade 'git'
 brew_install_or_upgrade 'openssl'
 brew_install_or_upgrade 'vim'
+brew_install_or_upgrade 'wget'
 brew_install_or_upgrade 'zsh'
-
+brew_install_or_upgrade 'zsh-completions'
 
 fancy_echo "Updating Heroku tools ..."
 brew_install_or_upgrade 'heroku-toolbelt'
-brew_install_or_upgrade 'parity'
 
 fancy_echo "Updating programming languages ..."
 brew_install_or_upgrade 'node'
@@ -185,32 +185,17 @@ brew_launchctl_restart 'neo4j'
 brew_launchctl_restart 'mongodb'
 
 fancy_echo "Updating development tools ..."
+brew_cask_install_or_upgrade 'cocoarestclient'
+brew_cask_install_or_upgrade 'flux'
+brew_cask_install_or_upgrade 'spotify'
+brew_cask_install_or_upgrade 'visual-studio-code'
+brew_cask_install_or_upgrade 'atom'
+brew_cask_install_or_upgrade 'firefox'
+brew_cask_install_or_upgrade 'firefoxdeveloperedition'
+brew_cask_install_or_upgrade 'slack'
+brew_cask_install_or_upgrade 'postico'
+brew_cask_install_or_upgrade 'robomongo'
+brew_cask_install_or_upgrade 'gimp'
 
-# Visual Studio Code
-# Atom
-# Mozilla Firefox
-# Mozilla Firefox Developer Edition
-# Spotify
-# Slack
-# cocoarestclient
-
-fancy_echo "Configuring Ruby ..."
-find_latest_ruby() {
-  rbenv install -l | grep -v - | tail -1 | sed -e 's/^ *//'
-}
-
-ruby_version="$(find_latest_ruby)"
-# shellcheck disable=SC2016
-append_to_zshrc 'eval "$(rbenv init - --no-rehash)"' 1
-eval "$(rbenv init -)"
-
-if ! rbenv versions | grep -Fq "$ruby_version"; then
-  RUBY_CONFIGURE_OPTS=--with-openssl-dir=/usr/local/opt/openssl rbenv install -s "$ruby_version"
-fi
-
-rbenv global "$ruby_version"
-rbenv shell "$ruby_version"
-gem update --system
-gem_install_or_update 'bundler'
-number_of_cores=$(sysctl -n hw.ncpu)
-bundle config --global jobs $((number_of_cores - 1))
+fancy_echo "Installing oh-my-zsh on top of zsh ..."
+curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
