@@ -74,29 +74,12 @@ brew_install_or_upgrade() {
   fi
 }
 
-brew_cask_install_or_upgrade() {
-  if brew_cask_is_installed "$1"; then
-    brew cask update "$@"
-  else
-    brew cask install "$@"
-  fi
-}
-
 brew_is_installed() {
   local name
   name="$(brew_expand_alias "$1")"
 
   brew list -1 | grep -Fqx "$name"
 }
-
-
-brew_cask_is_installed() {
-  local name
-  name="$(brew_expand_alias "$1")"
-
-  brew cask list -1 | grep -Fqx "$name"
-}
-
 
 brew_is_upgradable() {
   local name
@@ -173,35 +156,43 @@ brew_install_or_upgrade 'heroku-toolbelt'
 
 fancy_echo "Updating programming languages ..."
 brew_install_or_upgrade 'node'
-brew_install_or_upgrade 'mono'
-brew_install_or_upgrade 'dnvm'
-
-fancy_echo "Using DNVM to install DNX for Mono ..."
-dnvm upgrade -r mono
 
 fancy_echo "Updating databases ..."
 brew_install_or_upgrade 'postgres'
 brew_install_or_upgrade 'neo4j'
-brew_install_or_upgrade 'mongodb'
 brew_launchctl_restart 'postgresql'
 brew_launchctl_restart 'neo4j'
-brew_launchctl_restart 'mongodb'
+
+brew update; brew cleanup; brew cask cleanup;
+
+brew tap caskroom/cask
+brew tap caskroom/versions
+brew tap homebrew/boneyard
+brew tap caskroom/fonts
+
+# Updated grep
+brew tap homebrew/dupes
+brew brew_install_or_upgrade grep
+
+# Updated curl
+brew brew_install_or_upgrade curl
+brew link curl --force
 
 fancy_echo "Updating development tools ..."
-brew_cask_install_or_upgrade 'cocoarestclient'
-brew_cask_install_or_upgrade 'flux'
-brew_cask_install_or_upgrade 'caffeine'
-brew_cask_install_or_upgrade 'spotify'
-brew_cask_install_or_upgrade 'visual-studio-code'
-brew_cask_install_or_upgrade 'atom'
-brew_cask_install_or_upgrade 'firefox'
-brew_cask_install_or_upgrade 'chrome'
-brew_cask_install_or_upgrade 'slack'
-brew_cask_install_or_upgrade 'postico'
-brew_cask_install_or_upgrade 'robomongo'
-brew_cask_install_or_upgrade 'gimp'
+brew cask install 'cocoarestclient'
+brew cask install 'flux'
+brew cask install 'caffeine'
+brew cask install 'spotify'
+brew cask install 'atom'
+brew cask install 'firefox'
+brew cask install 'google-chrome'
+brew cask install 'slack'
+brew cask install 'postico'
+brew cask install 'gimp'
 
 if [ -z "zsh --version" ]; then
   fancy_echo "Installing oh-my-zsh on top of zsh ..."
   curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
 fi
+
+brew update; brew cleanup; brew cask cleanup;
