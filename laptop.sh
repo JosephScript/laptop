@@ -157,7 +157,6 @@ fi
 
 fancy_echo "Updating Homebrew formulae ..."
 brew_tap 'thoughtbot/formulae'
-brew_tap 'aspnet/dnx'
 
 brew update
 
@@ -174,7 +173,11 @@ brew_install_or_upgrade 'heroku-toolbelt'
 
 fancy_echo "Updating programming languages ..."
 brew_install_or_upgrade 'node'
+brew_install_or_upgrade 'mono'
 brew_install_or_upgrade 'dnvm'
+
+fancy_echo "Using DNVM to install DNX for Mono ..."
+dnvm upgrade -r mono
 
 fancy_echo "Updating databases ..."
 brew_install_or_upgrade 'postgres'
@@ -187,6 +190,7 @@ brew_launchctl_restart 'mongodb'
 fancy_echo "Updating development tools ..."
 brew_cask_install_or_upgrade 'cocoarestclient'
 brew_cask_install_or_upgrade 'flux'
+brew_cask_install_or_upgrade 'caffeine'
 brew_cask_install_or_upgrade 'spotify'
 brew_cask_install_or_upgrade 'visual-studio-code'
 brew_cask_install_or_upgrade 'atom'
@@ -197,5 +201,7 @@ brew_cask_install_or_upgrade 'postico'
 brew_cask_install_or_upgrade 'robomongo'
 brew_cask_install_or_upgrade 'gimp'
 
-fancy_echo "Installing oh-my-zsh on top of zsh ..."
-curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+if [ -z "zsh --version" ]; then
+  fancy_echo "Installing oh-my-zsh on top of zsh ..."
+  curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+fi
