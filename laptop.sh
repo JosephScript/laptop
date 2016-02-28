@@ -189,6 +189,7 @@ brew cask install 'google-chrome'
 brew cask install 'slack'
 brew cask install 'postico'
 brew cask install 'gimp'
+brew cask install 'java7'
 
 if [ -z "zsh --version" ]; then
   fancy_echo "Installing oh-my-zsh on top of zsh ..."
