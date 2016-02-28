@@ -151,8 +151,8 @@ brew_install_or_upgrade 'wget'
 brew_install_or_upgrade 'zsh'
 brew_install_or_upgrade 'zsh-completions'
 
-fancy_echo "Updating Heroku tools ..."
-brew_install_or_upgrade 'heroku-toolbelt'
+fancy_echo "Updating Amazon Elastic Beanstalk tools ..."
+brew_install_or_upgrade 'awsebcli'
 
 fancy_echo "Updating programming languages ..."
 brew_install_or_upgrade 'node'
